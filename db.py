@@ -2,9 +2,15 @@
 
 import streamlit as st
 from sqlalchemy.sql import text
+import os
+from dotenv import load_dotenv
 
-# Create the SQL connection to pets_db as specified in your secrets file.
-conn = st.connection('test_db', type='sql')
+# Load environment variables
+load_dotenv()
+db_name = os.getenv('DB_NAME')
+
+# Create the SQLite connection using DB_NAME from .env
+conn = st.connection(db_name, type='sql')
 
 def init_users_table():
     """Initialize the users table if it doesn't exist"""
@@ -70,6 +76,9 @@ def create_fixture_data():
         except ValueError:
             print(f"Fixture user already exists: {username}")
 
-# Initialize the users table and create fixture data when the module is loaded
-init_users_table()
-create_fixture_data() 
+def init_db():
+    """
+    Initialize the database by creating the users table and adding fixture data.
+    """
+    init_users_table()
+    create_fixture_data()

@@ -67,10 +67,9 @@ node_modules/
 # Coverage directory used by tools like istanbul
 coverage/
 
-########################################################################
+########################################
 # Streamlit
 ########################################################################
-.streamlit/
 !e2e_playwright/.streamlit/
 lib/streamlit/static
 streamlit-storage
@@ -120,3 +119,6 @@ frontend/cypress/snapshots/linux/1x
 .swc/
 
 *.db
+
+# Environment variables
+.env
