@@ -1,0 +1,3 @@
+PyJWT
+python-dotenv
+flake8
