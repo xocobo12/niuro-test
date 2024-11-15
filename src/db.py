@@ -2,6 +2,7 @@ import streamlit as st
 from sqlalchemy.sql import text
 import os
 from dotenv import load_dotenv
+from src.hash_utils import hash_password
 
 # Load environment variables
 load_dotenv()
@@ -70,15 +71,16 @@ def get_user_password(username):
 
 def create_fixture_data():
     """
-    Create three test users in the database.
-    Only creates them if they don't already exist.
+    Create one test user in the database.
+    Only creates it if it doesn't already exist.
     """
     test_users = [
-        (os.getenv("TEST_USER"), os.getenv("TEST_PASSWORD")),
+        (os.getenv("NEW_USER"), os.getenv("NEW_PASSWORD")),
     ]
 
-    for username, hashed_password in test_users:
+    for username, password in test_users:
         try:
+            hashed_password = hash_password(password)
             add_user(username, hashed_password)
             print(f"Created fixture user: {username}")
         except ValueError:
