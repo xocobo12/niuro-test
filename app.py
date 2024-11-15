@@ -1,13 +1,9 @@
 import streamlit as st
-# from utils import *
-# from db import *
-# from auth import *
-
 
 st.set_page_config(page_title='Formulario de Niuro ', layout='wide')
-
 st.title("Hello, Niuro!")
 st.write("Welcome to your first Streamlit app.")
+
 if st.button("Presione para agregar un nuevo registro"):
     pass
 
