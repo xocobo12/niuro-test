@@ -1,33 +1,43 @@
+import pytest
 from src.auth import AuthManager
+from src.hash_utils import hash_password
+from dotenv import load_dotenv
+import os
 
-# Crear una instancia de AuthManager
-auth_manager = AuthManager()
+@pytest.fixture(scope="module")
+def auth_manager():
+    """
+    Fixture to create an instance of AuthManager.
+    """
+    return AuthManager()
 
-# Prueba de registro de usuario
-print("Testing user registration...")
-username = "test_user"
-password = "password123"
-is_registered = auth_manager.register_user(username, password)
+@pytest.fixture(scope="module")
+def credentials():
+    """
+    Fixture to load credentials from environment variables.
+    """
+    load_dotenv()
+    username = os.getenv("USER_1")
+    password = os.getenv("PASSWORD_1")
+    if not username or not password:
+        raise ValueError("Username or password is not set in the environment variables.")
+    return username, password
 
-# Intentar registrar el mismo usuario nuevamente
-try:
-    auth_manager.register_user(username, password)
-except Exception as e:
-    print(f"Error as expected when registering the same user: {e}")
+def test_authenticate_user(auth_manager, credentials):
+    """
+    Test user authentication with correct credentials.
+    """
+    username, password = credentials
+    # Authenticate user
+    token = auth_manager.authenticate_user(username, password)
+    assert token is not False, "Authentication failed with correct credentials."
 
-# Prueba de autenticación de usuario
-print("\nTesting user authentication...")
-token = auth_manager.authenticate_user(username, password)
-print(f"Authentication successful, token received: {token is not None}")  # Debería ser True
+def test_authenticate_user_wrong_password(auth_manager, credentials):
+    """
+    Test user authentication with an incorrect password.
+    """
+    username, _ = credentials
 
-# Prueba de autenticación con una contraseña incorrecta
-token = auth_manager.authenticate_user(username, "wrong_password")
-print(f"Authentication with wrong password: {token is None}")  # Debería ser True
-
-# Prueba de verificación de token
-print("\nTesting token verification...")
-if token := auth_manager.authenticate_user(username, password):
-    verified_username = auth_manager.verify_token(token)
-    print(f"Token verified, username extracted: {verified_username == username}")  # Debería ser True
-else:
-    print("Failed to authenticate user for token verification.")
+    # Attempt to authenticate with an incorrect password
+    token = auth_manager.authenticate_user(username, "wrong_password")
+    assert token is False, "Authentication should fail with an incorrect password."
