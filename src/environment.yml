@@ -6,3 +6,4 @@ dependencies:
   - flask
   - pandas
   - numpy
+  - flake8
