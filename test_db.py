@@ -1,5 +1,5 @@
 import streamlit as st
-from db import init_db
+from src.db import init_db
 
 # Init database
 init_db()
