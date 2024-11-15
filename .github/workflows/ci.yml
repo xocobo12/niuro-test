@@ -39,5 +39,5 @@ jobs:
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
         run: |
-          heroku git:remote -a app.py
+          heroku git:remote -a niuro-test.py
           git push heroku main --force
