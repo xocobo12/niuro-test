@@ -1,5 +1,3 @@
-# streamlit_app.py
-
 import streamlit as st
 from sqlalchemy.sql import text
 import os
@@ -12,6 +10,7 @@ db_name = os.getenv('DB_NAME')
 # Create the SQLite connection using DB_NAME from .env
 conn = st.connection(db_name, type='sql')
 
+
 def init_users_table():
     """Initialize the users table if it doesn't exist"""
     with conn.session as s:
@@ -22,6 +21,7 @@ def init_users_table():
             );
         '''))
         s.commit()
+
 
 def add_user(username, hashed_password):
     """
@@ -34,16 +34,25 @@ def add_user(username, hashed_password):
             text('SELECT username FROM users WHERE username = :username'),
             params={'username': username}
         ).fetchone()
-        
+
         if result:
             raise ValueError("User already exists.")
-            
+
         # Add new user
-        s.execute(
-            text('INSERT INTO users (username, password) VALUES (:username, :password)'),
-            params={'username': username, 'password': hashed_password}
+        query = text(
+            (
+                "INSERT INTO users (username, password) "
+                "VALUES (:username, :password)"
+            )
         )
+        params = {
+                  'username': username,
+                  'password': hashed_password,
+                 }
+
+        s.execute(query, params=params)
         s.commit()
+
 
 def get_user_password(username):
     """
@@ -55,8 +64,9 @@ def get_user_password(username):
             text('SELECT password FROM users WHERE username = :username'),
             params={'username': username}
         ).fetchone()
-        
+
         return result[0] if result else None
+
 
 def create_fixture_data():
     """
@@ -64,11 +74,9 @@ def create_fixture_data():
     Only creates them if they don't already exist.
     """
     test_users = [
-        ("admin", "pbkdf2:sha256:260000$rMQd4BtZ$287442d5d35c95b8819f68d8459e8d8c1c876aac7a1825482bc3c2921f597a42"),
-        ("test_user", "pbkdf2:sha256:260000$vGd6bxdR$478cf43df5c7542c12973fa9ecd83d38c86856e8453ea069df49faa4326dd284"),
-        ("demo", "pbkdf2:sha256:260000$pKd8cXsY$8943def3d87ff9bb0b9f0486c0c47a2321af2a7caf19377da689ddf3c6872efc")
+        (os.getenv("TEST_USER"), os.getenv("TEST_PASSWORD")),
     ]
-    
+
     for username, hashed_password in test_users:
         try:
             add_user(username, hashed_password)
@@ -76,9 +84,10 @@ def create_fixture_data():
         except ValueError:
             print(f"Fixture user already exists: {username}")
 
+
 def init_db():
     """
-    Initialize the database by creating the users table and adding fixture data.
+    Initialize the db by creating the users table and adding fixture data.
     """
     init_users_table()
     create_fixture_data()
