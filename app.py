@@ -1,26 +1,52 @@
 import streamlit as st
 
-st.set_page_config(page_title='Formulario de Niuro ', layout='wide')
-st.title("Hello, Niuro!")
-st.write("Welcome to your first Streamlit app.")
 
-if st.button("Presione para agregar un nuevo registro"):
-    pass
+# Hardcoded email and password for demonstration
+VALID_EMAIL = "user@example.com"
+VALID_PASSWORD = "password123"
 
-with st.form('report'):
-    st.write("### Report Details")
-    col1, col2 = st.columns(2)
 
-    report_title = col1.text_input("Enter report title")
-    report_author = col1.text_input("Enter the report author's name")
-    report_date = col2.date_input("Select a date for the report")
-    report_client = col2.text_input("Enter the client's name")
+# Function to handle login
+def login(email, password):
+    if email == VALID_EMAIL and password == VALID_PASSWORD:
+        return True
+    return False
 
-    sect_col1, sect_col2 = st.columns(2)
 
-    sect_col1.write("### Section Details")
-    section_title = sect_col1.text_input("Enter section title")
-    section_text_summary = sect_col1.text_area("Section Summary")
+# Main app
+def main():
+    st.set_page_config(page_title='Formulario de Registro')
+    st.title("Autentificación")
+    st.write("Porfavor ingrese su Email y contraseña")
 
-    if st.form_submit_button('Generate'):
-        generate_report(report_title)
+    if "logged_in" not in st.session_state:
+        st.session_state.logged_in = False
+
+    if st.session_state.logged_in:
+        st.success(f"Welcome, {VALID_EMAIL}!")
+        if st.button("Logout"):
+            st.session_state.logged_in = False
+            st.experimental_rerun()
+    else:
+        st.subheader("Login")
+
+        # Email input field
+        email = st.text_input("Email", "")
+
+        # Password input field
+        password = st.text_input("Password", "", type="password")
+
+        # Login button
+        if st.button("Login"):
+            if email and password:
+                if login(email, password):
+                    st.session_state.logged_in = True
+                    st.experimental_rerun()
+                else:
+                    st.error("Invalid email or password.")
+            else:
+                st.warning("Please enter both email and password.")
+
+
+if __name__ == "__main__":
+    main()
