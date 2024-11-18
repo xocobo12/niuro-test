@@ -2,6 +2,7 @@ import bcrypt
 import jwt
 from datetime import datetime, timedelta
 from src.db import add_user, get_user_password
+from src.hash_utils import hash_password
 import os
 from dotenv import load_dotenv
 from functools import wraps
@@ -49,7 +50,7 @@ class AuthManager:
         bool
             True if the registration was successful, False otherwise.
         """
-        hashed_password = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
+        hashed_password = hash_password(password)
         try:
             add_user(username, hashed_password)
             return True
@@ -78,7 +79,7 @@ class AuthManager:
         if hashed_password and checked_password:
             # Create token if successful
             return self.create_token(username)
-        return None
+        return False
 
     def create_token(self, username):
         """
