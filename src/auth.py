@@ -101,7 +101,7 @@ class AuthManager:
         exp = datetime.utcnow() + timedelta(hours=exp_hours)
         payload = {
             "username": username,
-            "exp": datetime.utcnow() + timedelta(hours=1),
+            "exp": exp,
         }
         return jwt.encode(payload, SECRET_KEY, algorithm="HS256")
 
