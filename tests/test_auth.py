@@ -5,14 +5,6 @@ import os
 
 
 @pytest.fixture(scope="module")
-def auth_manager():
-    """
-    Fixture to create an instance of AuthManager.
-    """
-    return AuthManager()
-
-
-@pytest.fixture(scope="module")
 def credentials():
     """
     Fixture to load credentials from environment variables.
