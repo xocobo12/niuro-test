@@ -1,9 +1,14 @@
 import streamlit as st
+import os
+from dotenv import load_dotenv
 
 
-# Hardcoded email and password for demonstration
-VALID_EMAIL = "user@example.com"
-VALID_PASSWORD = "password123"
+# Load environment variables from the .env file
+load_dotenv()
+
+# Read the email and password from environment variables
+VALID_EMAIL = os.getenv("VALID_EMAIL")
+VALID_PASSWORD = os.getenv("VALID_PASSWORD")
 
 
 # Function to handle login
@@ -15,9 +20,9 @@ def login(email, password):
 
 # Main app
 def main():
-    st.set_page_config(page_title='Formulario de Registro')
-    st.title("Autentificación")
-    st.write("Porfavor ingrese su Email y contraseña")
+    st.set_page_config(page_title='Registration')
+    st.title("Authentification")
+    st.write("Please enter your Email and Password")
 
     if "logged_in" not in st.session_state:
         st.session_state.logged_in = False
@@ -26,7 +31,7 @@ def main():
         st.success(f"Welcome, {VALID_EMAIL}!")
         if st.button("Logout"):
             st.session_state.logged_in = False
-            st.experimental_rerun()
+            st.rerun()
     else:
         st.subheader("Login")
 
@@ -41,7 +46,7 @@ def main():
             if email and password:
                 if login(email, password):
                     st.session_state.logged_in = True
-                    st.experimental_rerun()
+                    st.rerun()
                 else:
                     st.error("Invalid email or password.")
             else:
