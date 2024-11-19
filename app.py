@@ -1,50 +1,42 @@
 import streamlit as st
 import os
 from dotenv import load_dotenv
+from src.auth import AuthManager
 
 
 # Load environment variables from the .env file
 load_dotenv()
 
-# Read the email and password from environment variables
-VALID_EMAIL = os.getenv("VALID_EMAIL")
-VALID_PASSWORD = os.getenv("VALID_PASSWORD")
-
-
-# Function to handle login
-def login(email, password):
-    if email == VALID_EMAIL and password == VALID_PASSWORD:
-        return True
-    return False
-
-
+authmanager = AuthManager()
 # Main app
 def main():
     st.set_page_config(page_title='Registration')
     st.title("Authentification")
-    st.write("Please enter your Email and Password")
+    st.write("Please enter User name and Password")
+
+    username = None
 
     if "logged_in" not in st.session_state:
         st.session_state.logged_in = False
 
     if st.session_state.logged_in:
-        st.success(f"Welcome, {VALID_EMAIL}!")
+        st.success(f"Welcome, {username}!")
         if st.button("Logout"):
             st.session_state.logged_in = False
             st.rerun()
     else:
         st.subheader("Login")
 
-        # Email input field
-        email = st.text_input("Email", "")
+        # username input field
+        username = st.text_input("username", "")
 
         # Password input field
         password = st.text_input("Password", "", type="password")
 
         # Login button
         if st.button("Login"):
-            if email and password:
-                if login(email, password):
+            if username and password:
+                if authmanager.authenticate_user(username, password):
                     st.session_state.logged_in = True
                     st.rerun()
                 else:
