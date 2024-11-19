@@ -1,5 +1,4 @@
 import streamlit as st
-import os
 from dotenv import load_dotenv
 from src.auth import AuthManager
 
@@ -9,6 +8,8 @@ load_dotenv()
 
 authmanager = AuthManager()
 # Main app
+
+
 def main():
     st.set_page_config(page_title='Registration')
     st.title("Authentification")
