@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 from src.auth import AuthManager
 
 
+st.set_page_config(page_title='Registration')
 # Load environment variables from the .env file
 load_dotenv()
 
@@ -11,7 +12,6 @@ authmanager = AuthManager()
 
 
 def main():
-    st.set_page_config(page_title='Registration')
     st.title("Authentification")
     st.write("Please enter User name and Password")
 
