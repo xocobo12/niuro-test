@@ -28,6 +28,13 @@ def add_user(username, hashed_password):
     Add a new user to the database.
     Raises ValueError if user already exists.
     """
+    """Initialize the users table if it doesn't exist"""
+    # Load environment variables
+    load_dotenv()
+    db_name = os.getenv('DB_NAME')
+
+    # Create the SQLite connection using DB_NAME from .env
+    conn = st.connection(db_name, type='sql')
     with conn.session as s:
         # Check if user exists
         result = s.execute(
