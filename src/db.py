@@ -4,16 +4,15 @@ import os
 from dotenv import load_dotenv
 from src.hash_utils import hash_password
 
-# Load environment variables
-load_dotenv()
-db_name = os.getenv('DB_NAME')
-
-# Create the SQLite connection using DB_NAME from .env
-conn = st.connection(db_name, type='sql')
-
 
 def init_users_table():
     """Initialize the users table if it doesn't exist"""
+    # Load environment variables
+    load_dotenv()
+    db_name = os.getenv('DB_NAME')
+
+    # Create the SQLite connection using DB_NAME from .env
+    conn = st.connection(db_name, type='sql')
     with conn.session as s:
         s.execute(text('''
             CREATE TABLE IF NOT EXISTS users (
@@ -60,6 +59,10 @@ def get_user_password(username):
     Retrieve a user's hashed password from the database.
     Returns None if user doesn't exist.
     """
+    # Load environment variables
+    load_dotenv()
+    db_name = os.getenv('DB_NAME')
+    conn = st.connection(db_name, type='sql')
     with conn.session as s:
         result = s.execute(
             text('SELECT password FROM users WHERE username = :username'),
