@@ -1,6 +1,7 @@
 import pytest
 import os
 from src.auth import AuthManager
+from src.db import DBClient
 from dotenv import load_dotenv
 
 
@@ -10,6 +11,14 @@ def auth_manager():
     Fixture to create an instance of AuthManager.
     """
     return AuthManager()
+
+
+@pytest.fixture(scope="module")
+def db_client():
+    """
+    Fixture to create an instance of DBClient.
+    """
+    return DBClient()
 
 
 @pytest.fixture(scope="module")
