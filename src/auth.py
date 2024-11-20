@@ -76,10 +76,11 @@ class AuthManager:
             JWT token if authentication is successful, None otherwise.
         """
         hashed_password = self.DB.get_user_password(username)
-        checked_password = bcrypt.checkpw(password.encode(), hashed_password)
-        if hashed_password and checked_password:
+        if hashed_password:
+            checked_password = bcrypt.checkpw(password.encode(), hashed_password)
+            if checked_password:
             # Create token if successful
-            return self.create_token(username)
+                return self.create_token(username)
         return False
 
     def create_token(self, username, exp_hours=12):
