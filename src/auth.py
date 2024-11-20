@@ -81,7 +81,7 @@ class AuthManager:
             return self.create_token(username)
         return False
 
-    def create_token(self, username):
+    def create_token(self, username, exp_hours=12):
         """
         Generates a JWT token for a given username.
 
@@ -90,14 +90,18 @@ class AuthManager:
         username : str
             The username for whom to generate the token.
 
+        exp_hours : int
+            Number of hours that token lasts
+
         Returns
         -------
         str
             JWT token as a string.
         """
+        exp = datetime.utcnow() + timedelta(hours=exp_hours)
         payload = {
             "username": username,
-            "exp": datetime.utcnow() + timedelta(hours=1)  # Expires in 1hr
+            "exp": exp.timestamp(),
         }
         return jwt.encode(payload, SECRET_KEY, algorithm="HS256")
 
