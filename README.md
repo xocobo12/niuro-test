@@ -11,6 +11,7 @@ This platform is a test for Streamlit and its serves to stablish conventions ins
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
+streamlit run app.py # To run the project
 ```
 
 ## Conventions
