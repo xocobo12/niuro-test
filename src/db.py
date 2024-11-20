@@ -27,8 +27,9 @@ def add_user(username, hashed_password):
     """
     Add a new user to the database.
 
-    This function checks if the user already exists in the database. If the user exists, 
-    it raises a `ValueError`. Otherwise, it inserts a new user with the provided username 
+    Checks if the user already exists in the database. If the user exists,
+    it raises a `ValueError`.
+    Otherwise, it inserts a new user with the provided username
     and hashed password into the `users` table.
 
     Parameters
@@ -45,7 +46,7 @@ def add_user(username, hashed_password):
 
     Notes
     -----
-    - This function requires the database connection parameters to be set 
+    - This function requires the database connection parameters to be set
       in an `.env` file, specifically the `DB_NAME` variable.
     - The database is assumed to be an SQLite database.
 
