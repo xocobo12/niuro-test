@@ -26,9 +26,35 @@ def init_users_table():
 def add_user(username, hashed_password):
     """
     Add a new user to the database.
-    Raises ValueError if user already exists.
+
+    This function checks if the user already exists in the database. If the user exists, 
+    it raises a `ValueError`. Otherwise, it inserts a new user with the provided username 
+    and hashed password into the `users` table.
+
+    Parameters
+    ----------
+    username : str
+        The username of the user to be added.
+    hashed_password : str
+        The hashed password of the user to be added.
+
+    Raises
+    ------
+    ValueError
+        If a user with the specified username already exists in the database.
+
+    Notes
+    -----
+    - This function requires the database connection parameters to be set 
+      in an `.env` file, specifically the `DB_NAME` variable.
+    - The database is assumed to be an SQLite database.
+
+    Examples
+    --------
+    Add a new user to the database:
+
+    >>> add_user("new_user", "hashed_password123")
     """
-    """Initialize the users table if it doesn't exist"""
     # Load environment variables
     load_dotenv()
     db_name = os.getenv('DB_NAME')
