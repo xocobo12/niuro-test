@@ -1,26 +1,50 @@
 import streamlit as st
+from dotenv import load_dotenv
+from src.auth import AuthManager
 
-st.set_page_config(page_title='Formulario de Niuro ', layout='wide')
-st.title("Hello, Niuro!")
-st.write("Welcome to your first Streamlit app.")
 
-if st.button("Presione para agregar un nuevo registro"):
-    pass
+st.set_page_config(page_title='Registration')
+# Load environment variables from the .env file
+load_dotenv()
 
-with st.form('report'):
-    st.write("### Report Details")
-    col1, col2 = st.columns(2)
+authmanager = AuthManager()
+# Main app
 
-    report_title = col1.text_input("Enter report title")
-    report_author = col1.text_input("Enter the report author's name")
-    report_date = col2.date_input("Select a date for the report")
-    report_client = col2.text_input("Enter the client's name")
 
-    sect_col1, sect_col2 = st.columns(2)
+def main():
+    st.title("Authentification")
+    st.write("Please enter User name and Password")
 
-    sect_col1.write("### Section Details")
-    section_title = sect_col1.text_input("Enter section title")
-    section_text_summary = sect_col1.text_area("Section Summary")
+    username = None
 
-    if st.form_submit_button('Generate'):
-        generate_report(report_title)
+    if "logged_in" not in st.session_state:
+        st.session_state.logged_in = False
+
+    if st.session_state.logged_in:
+        st.success(f"Welcome, {username}!")
+        if st.button("Logout"):
+            st.session_state.logged_in = False
+            st.rerun()
+    else:
+        st.subheader("Login")
+
+        # username input field
+        username = st.text_input("username", "")
+
+        # Password input field
+        password = st.text_input("Password", "", type="password")
+
+        # Login button
+        if st.button("Login"):
+            if username and password:
+                if authmanager.authenticate_user(username, password):
+                    st.session_state.logged_in = True
+                    st.rerun()
+                else:
+                    st.error("Invalid email or password.")
+            else:
+                st.warning("Please enter both email and password.")
+
+
+if __name__ == "__main__":
+    main()
