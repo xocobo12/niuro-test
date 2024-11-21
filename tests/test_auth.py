@@ -1,8 +1,3 @@
-import pytest
-from dotenv import load_dotenv
-import os
-
-
 def test_authenticate_user(auth_manager, credentials):
     """
     Test user authentication with correct credentials.
