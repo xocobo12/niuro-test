@@ -8,9 +8,6 @@ from src.hash_utils import hash_password
 class DBClient:
     """
     A class to manage user-related database operations.
-
-    This class provides methods to initialize the users table, add a user, 
-    and retrieve a user's hashed password.
     """
 
     def __init__(self):
@@ -22,11 +19,10 @@ class DBClient:
         self.db_name = os.getenv('DB_NAME')
         self.conn = st.connection(self.db_name, type='sql')
 
-
     def init_users_table(self):
         """Initialize the users table if it doesn't exist"""
         # Create the SQLite connection using DB_NAME from .env
-        conn = st.connection(db_name, type='sql')
+        conn = st.connection(self.db_name, type='sql')
         with conn.session as s:
             s.execute(text('''
                 CREATE TABLE IF NOT EXISTS users (
@@ -35,7 +31,6 @@ class DBClient:
                 );
             '''))
             s.commit()
-
 
     def add_user(self, username, hashed_password):
         """
@@ -56,9 +51,9 @@ class DBClient:
         Raises
         ------
         ValueError
-            If a user with the specified username already exists in the database.
+            If a user with the specified username already exists in the db.
         """
-    
+
         with self.conn.session as s:
             # Check if user exists
             result = s.execute(
@@ -84,24 +79,18 @@ class DBClient:
             s.execute(query, params=params)
             s.commit()
 
-
     def get_user_password(self, username):
         """
         Retrieve a user's hashed password from the database.
         Returns None if user doesn't exist.
         """
-        # Load environment variables
-        load_dotenv()
-        db_name = os.getenv('DB_NAME')
-        conn = st.connection(db_name, type='sql')
-        with conn.session as s:
+        with self.conn.session as s:
             result = s.execute(
                 text('SELECT password FROM users WHERE username = :username'),
                 params={'username': username}
             ).fetchone()
 
             return result[0] if result else None
-
 
     def create_fixture_data(self):
         """
@@ -115,15 +104,14 @@ class DBClient:
         for username, password in test_users:
             try:
                 hashed_password = hash_password(password)
-                add_user(username, hashed_password)
+                self.add_user(username, hashed_password)
                 print(f"Created fixture user: {username}")
             except ValueError:
                 print(f"Fixture user already exists: {username}")
 
-
-    def init_db():
+    def init_db(self):
         """
         Initialize the db by creating the users table and adding fixture data.
         """
-        init_users_table()
-        create_fixture_data()
+        self.init_users_table()
+        self.create_fixture_data()
