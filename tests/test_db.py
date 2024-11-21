@@ -1,20 +1,8 @@
-from streamlit.testing.v1 import AppTest
-from src.db import init_db
+import streamlit as st
 
 
-def app_script():
-    import streamlit as st
-
-    # Create the SQL connection to pets_db as specified in your secrets file.
-    conn = st.connection('test_db', type='sql')
+def test_users_table(db_client):
     # Query and display the data you inserted
-    users = conn.query('select * from users')
-    st.dataframe(users)
-
-
-# Create the SQL connection to pets_db as specified in your secrets file.
-# Init database
-init_db()
-at = AppTest.from_function(app_script)
-at.run()
-assert at.dataframe[0].value.columns is not None
+    users = db_client.conn.query('select * from users')
+    st_df = st.dataframe(users)
+    assert st_df is not None, "Users table doesn't exist"
