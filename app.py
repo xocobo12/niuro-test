@@ -2,6 +2,7 @@ import streamlit as st
 from dotenv import load_dotenv
 from src.auth import AuthManager
 
+
 # Load environment variables from the .env file
 load_dotenv()
 
@@ -40,7 +41,7 @@ def main():
                     if authmanager.authenticate_user(username, password):
                         st.session_state.logged_in = True
                         st.session_state.username = username
-                        st.rerun()
+
                     else:
                         st.error("Invalid username or password.")
                 else:
