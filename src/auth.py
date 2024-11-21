@@ -34,7 +34,6 @@ class AuthManager:
     def __init__(self):
         self.DB = DBClient()
 
-
     def register_user(self, username, password):
         """
         Registers a new user with an encrypted password.
@@ -77,9 +76,9 @@ class AuthManager:
         """
         hashed_password = self.DB.get_user_password(username)
         if hashed_password:
-            checked_password = bcrypt.checkpw(password.encode(), hashed_password)
-            if checked_password:
-            # Create token if successful
+            checked_pwd = bcrypt.checkpw(password.encode(), hashed_password)
+            if checked_pwd:
+                # Create token if successful
                 return self.create_token(username)
         return False
 
