@@ -1,7 +1,8 @@
 import bcrypt
 import jwt
 from datetime import datetime, timedelta
-from src.db import add_user, get_user_password
+from src.db import DBClient
+from src.hash_utils import hash_password
 import os
 from dotenv import load_dotenv
 from functools import wraps
@@ -31,7 +32,7 @@ class AuthManager:
     """
 
     def __init__(self):
-        pass
+        self.DB = DBClient()
 
     def register_user(self, username, password):
         """
@@ -49,9 +50,9 @@ class AuthManager:
         bool
             True if the registration was successful, False otherwise.
         """
-        hashed_password = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
+        hashed_password = hash_password(password)
         try:
-            add_user(username, hashed_password)
+            self.DB.add_user(username, hashed_password)
             return True
         except Exception as e:
             print(f"Error registering user: {e}")
@@ -73,14 +74,15 @@ class AuthManager:
         str or None
             JWT token if authentication is successful, None otherwise.
         """
-        hashed_password = get_user_password(username)
-        checked_password = bcrypt.checkpw(password.encode(), hashed_password)
-        if hashed_password and checked_password:
-            # Create token if successful
-            return self.create_token(username)
-        return None
+        hashed_password = self.DB.get_user_password(username)
+        if hashed_password:
+            checked_pwd = bcrypt.checkpw(password.encode(), hashed_password)
+            if checked_pwd:
+                # Create token if successful
+                return self.create_token(username)
+        return False
 
-    def create_token(self, username):
+    def create_token(self, username, exp_hours=12):
         """
         Generates a JWT token for a given username.
 
@@ -89,14 +91,18 @@ class AuthManager:
         username : str
             The username for whom to generate the token.
 
+        exp_hours : int
+            Number of hours that token lasts
+
         Returns
         -------
         str
             JWT token as a string.
         """
+        exp = datetime.utcnow() + timedelta(hours=exp_hours)
         payload = {
             "username": username,
-            "exp": datetime.utcnow() + timedelta(hours=1)  # Expires in 1hr
+            "exp": exp.timestamp(),
         }
         return jwt.encode(payload, SECRET_KEY, algorithm="HS256")
 
