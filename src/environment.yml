@@ -1,9 +1,0 @@
-name: my_env
-channels:
-  - defaults
-dependencies:
-  - python=3.10.15
-  - flask
-  - pandas
-  - numpy
-  - flake8
