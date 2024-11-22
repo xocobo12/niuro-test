@@ -1,6 +1,7 @@
 import streamlit as st
 from dotenv import load_dotenv
 from src.auth import AuthManager
+import jwt
 
 
 # Load environment variables from the .env file
@@ -14,14 +15,14 @@ def main():
     st.write("Please log in or create an account.")
 
     # Session state initialization
-    if "logged_in" not in st.session_state:
-        st.session_state.logged_in = False
+    if "token" not in st.session_state:
+        st.session_state.token = None
         st.session_state.username = None
 
-    if st.session_state.logged_in:
+    if st.session_state.token:
         st.success(f"Welcome, {st.session_state.username}!")
         if st.button("Logout"):
-            st.session_state.logged_in = False
+            st.session_state.token = None
             st.session_state.username = None
             st.rerun()
     else:
@@ -38,10 +39,11 @@ def main():
 
             if st.button("Login"):
                 if username and password:
-                    if authmanager.authenticate_user(username, password):
-                        st.session_state.logged_in = True
-                        st.session_state.username = username
-
+                    jwtoken = authmanager.authenticate_user(username, password)
+                    if jwtoken:
+                        payload = jwt.decode(jwtoken, options={"verify_signature": False})
+                        st.session_state.token = jwtoken
+                        st.session_state.username = payload["username"]
                     else:
                         st.error("Invalid username or password.")
                 else:
