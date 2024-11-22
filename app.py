@@ -41,7 +41,9 @@ def main():
                 if username and password:
                     jwtoken = authmanager.authenticate_user(username, password)
                     if jwtoken:
-                        payload = jwt.decode(jwtoken, options={"verify_signature": False})
+                        payload = jwt.decode(
+                            jwtoken, options={"verify_signature": False}
+                            )
                         st.session_state.token = jwtoken
                         st.session_state.username = payload["username"]
                     else:
